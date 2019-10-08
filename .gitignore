@@ -1,3 +1,4 @@
 *.o
 a.out
 get_next_line
+*.ghc
