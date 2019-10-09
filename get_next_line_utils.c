@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/08 08:52:59 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/08 14:57:48 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/09 16:24:20 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,42 +25,18 @@ int		find_newline(char *str)
 	return (-1);
 }
 
-char	*strappend(char *dest, char *src)
+char	*ft_strncpy(char *dest, const char *src, size_t n)
 {
-	void	*copy;
-
-	if (dest == NULL)
-	{
-		if ((dest = (char*)malloc(sizeof(char) * (ft_strlen(src) + 1))) == NULL)
-			return (NULL);
-		ft_strcpy(dest, src);
-		return (dest);
-	}
-	if ((copy = (char*)malloc(sizeof(char) * (ft_strlen(dest) + 1))) == NULL)
-		return (NULL);
-	ft_strcpy(copy, dest);
-	free(dest);
-	if ((dest = (char*)malloc(sizeof(char)
-			* (ft_strlen(dest) + ft_strlen(src) + 1))) == NULL)
-		return (NULL);
-	ft_strcpy(dest, copy);
-	/* dest[ft_strlen(dest) + ft_strlen(src)] = '\0'; */
-	free(copy);
-	ft_strcat(dest, src);
-	return (dest);
-}
-
-char	*ft_strcpy(char *dest, const char *src)
-{
-	int i;
+	size_t	i;
 
 	i = 0;
-	while (src[i])
+	while (src[i] && i < n)
 	{
 		dest[i] = src[i];
 		i++;
 	}
-	dest[i] = '\0';
+	while (i < n)
+		dest[i++] = '\0';
 	return (dest);
 }
 
