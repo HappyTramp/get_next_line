@@ -6,17 +6,17 @@
 #    By: cacharle <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/08 08:11:00 by cacharle          #+#    #+#              #
-#    Updated: 2019/10/09 16:42:37 by cacharle         ###   ########.fr        #
+#    Updated: 2019/10/10 09:56:42 by cacharle         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 $(RM) = rm -f
 
 CC = gcc
-CCFLAGS = -Wall -Wextra #-Werror -D BUFFER_SIZE=32
+CCFLAGS = -Wall -Wextra -Werror
 
 NAME = get_next_line
-SRC = get_next_line.c get_next_line_utils.c
+SRC = get_next_line.c get_next_line_utils.c main.c
 OBJ = $(SRC:.c=.o)
 INCLUDE = get_next_line.h
 
@@ -25,7 +25,7 @@ all: $(NAME)
 $(NAME): $(OBJ) $(INCLUDE)
 	$(CC) $(CCFLAGS) -o $(NAME) $(OBJ)
 
-%.o: %.c
+%.o: %.c $(INCLUDE)
 	$(CC) $(CCFLAGS) -c -o $@ $<
 
 clean:
