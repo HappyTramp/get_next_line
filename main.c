@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/10 09:27:41 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/10 09:56:06 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/10 11:04:31 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@
 #include <fcntl.h>
 #include "get_next_line.h"
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-	int fd;
-	char *line;
-	int ret;
+	int		fd;
+	char	*line;
+	int		ret;
 
 	printf("BUFFER_SIZE = %d\n", BUFFER_SIZE);
 	(void)argc;
@@ -35,5 +35,5 @@ int main(int argc, char **argv)
 	else if (ret == 0)
 		printf("EOF\n");
 	close(fd);
-	return 0;
+	return (0);
 }
