@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/08 10:37:41 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/10 11:24:20 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/10 16:37:31 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,15 @@ int	get_next_line(int fd, char **line)
 	static int	line_len = 0;
 	static char	rest_buf[BUFFER_SIZE + 1] = {0};
 
+	if (line == NULL)
+		return (ERROR);
 	local_buf[BUFFER_SIZE] = '\0';
 	if ((ret = read_after(fd, local_buf, rest_buf)) <= 0 && local_buf[0] == 0)
 		return (ret);
-	if ((split_at = find_newline(local_buf)) != -1)
+	split_at = find_newline(local_buf);
+	if (split_at == -1 && ret < BUFFER_SIZE)
+		split_at = ft_strlen(local_buf);
+	if (split_at != -1)
 	{
 		ft_strncpy(rest_buf, local_buf + split_at + 1,
 					ft_strlen(local_buf) - split_at);
@@ -58,11 +63,10 @@ int	read_after(int fd, char *local_buf, char *rest_buf)
 	int	ret;
 
 	offset = ft_strlen(rest_buf);
-	ft_strncpy(local_buf, rest_buf, offset + 1);
+	ft_strncpy(local_buf, rest_buf, offset);
 	rest_buf[0] = '\0';
 	if ((ret = read(fd, local_buf + offset, BUFFER_SIZE - offset)) == -1)
 		return (ERROR);
-	if (ret == 0)
-		local_buf[offset + ret] = '\0';
+	local_buf[offset + ret] = '\0';
 	return (ret);
 }

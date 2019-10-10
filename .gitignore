@@ -3,3 +3,6 @@ a.out
 get_next_line
 *.ghc
 test
+test2
+test3
+*.dSYM
