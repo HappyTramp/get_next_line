@@ -6,20 +6,12 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/08 08:52:59 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/11 09:50:44 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/11 14:29:34 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int		find_newline(char *str)
-{
-	int i;
-
-	i = -1;
-	while (str[++i])
-		if (str[i] == '\n')
-			return (i);
-	return (-1);
-}
+#include <stdlib.h>
+#include "get_next_line.h"
 
 char	*ft_strncpy(char *dest, const char *src, int n)
 {
@@ -44,4 +36,60 @@ int		ft_strlen(char *str)
 	while (str[counter])
 		counter++;
 	return (counter);
+}
+
+char	*ft_strappend(char *dest, char *src)
+{
+	void	*copy;
+
+	if (dest == NULL)
+	{
+		if ((dest = (char*)malloc(sizeof(char) * (ft_strlen(src) + 1))) == NULL)
+			return (NULL);
+		ft_strcpy(dest, src);
+		return (dest);
+	}
+	if ((copy = (char*)malloc(sizeof(char) * (ft_strlen(dest) + 1))) == NULL)
+		return (NULL);
+	ft_strcpy(copy, dest);
+	/* free(dest); */
+	if ((dest = (char*)malloc(sizeof(char)
+			* (ft_strlen(dest) + ft_strlen(src) + 1))) == NULL)
+		return (NULL);
+	ft_strcpy(dest, copy);
+	free(copy);
+	ft_strcat(dest, src);
+	return (dest);
+}
+
+char	*ft_strcpy(char *dest, const char *src)
+{
+	int i;
+
+	i = 0;
+	while (src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
+}
+
+char	*ft_strcat(char *dest, const char *src)
+{
+	int i;
+	int j;
+
+	i = 0;
+	while (dest[i])
+		i++;
+	j = 0;
+	while (src[j])
+	{
+		dest[i + j] = src[j];
+		j++;
+	}
+	dest[i + j] = '\0';
+	return (dest);
 }
