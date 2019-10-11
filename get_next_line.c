@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/08 10:37:41 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/10 16:37:31 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/11 11:21:32 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,23 +31,18 @@ int	get_next_line(int fd, char **line)
 	static int	line_len = 0;
 	static char	rest_buf[BUFFER_SIZE + 1] = {0};
 
-	if (line == NULL)
+	if (fd < 0 || line == NULL
+		|| (ret = read_after(fd, local_buf, rest_buf)) == -1)
 		return (ERROR);
-	local_buf[BUFFER_SIZE] = '\0';
-	if ((ret = read_after(fd, local_buf, rest_buf)) <= 0 && local_buf[0] == 0)
-		return (ret);
 	split_at = find_newline(local_buf);
-	if (split_at == -1 && ret < BUFFER_SIZE)
-		split_at = ft_strlen(local_buf);
-	if (split_at != -1)
+	if (split_at != -1 || ret == 0)
 	{
-		ft_strncpy(rest_buf, local_buf + split_at + 1,
-					ft_strlen(local_buf) - split_at);
 		if ((*line = malloc(sizeof(char) * (line_len + split_at + 1))) == NULL)
 			return (ERROR);
+		ft_strncpy(rest_buf, local_buf + split_at + 1,
+					ft_strlen(local_buf) - split_at);
 		ft_strncpy(*line + line_len, local_buf, split_at);
-		(*line)[line_len + split_at] = '\0';
-		return (LINE_READ);
+		return (ret == 0 && local_buf[0] == 0 ? END_OF_FILE : LINE_READ);
 	}
 	line_len += BUFFER_SIZE;
 	if ((ret = get_next_line(fd, line)) == -1)
