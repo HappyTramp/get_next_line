@@ -2,7 +2,12 @@
 a.out
 get_next_line
 *.ghc
+t1
+t2
+testrand
+testnl
 test
 test2
 test3
 *.dSYM
+

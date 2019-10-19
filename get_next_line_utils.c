@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/08 08:52:59 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/11 14:29:34 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/19 14:09:48 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,14 +47,15 @@ char	*ft_strappend(char *dest, char *src)
 		if ((dest = (char*)malloc(sizeof(char) * (ft_strlen(src) + 1))) == NULL)
 			return (NULL);
 		ft_strcpy(dest, src);
+	/* printf("%s - %s\n", dest, src); */
 		return (dest);
 	}
 	if ((copy = (char*)malloc(sizeof(char) * (ft_strlen(dest) + 1))) == NULL)
 		return (NULL);
 	ft_strcpy(copy, dest);
 	/* free(dest); */
-	if ((dest = (char*)malloc(sizeof(char)
-			* (ft_strlen(dest) + ft_strlen(src) + 1))) == NULL)
+	dest = (char*)malloc(sizeof(char) * (ft_strlen(dest) + ft_strlen(src) + 1));
+	if (dest == NULL)
 		return (NULL);
 	ft_strcpy(dest, copy);
 	free(copy);

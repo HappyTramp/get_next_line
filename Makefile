@@ -6,14 +6,14 @@
 #    By: cacharle <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/08 08:11:00 by cacharle          #+#    #+#              #
-#    Updated: 2019/10/10 11:20:17 by cacharle         ###   ########.fr        #
+#    Updated: 2019/10/19 14:49:29 by cacharle         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 $(RM) = rm -f
 
 CC = gcc
-CCFLAGS = -Wall -Wextra -Werror
+CCFLAGS = -Wall -Wextra -g
 
 NAME = get_next_line
 SRC = get_next_line.c get_next_line_utils.c main.c
@@ -35,3 +35,10 @@ fclean: clean
 	$(RM) $(NAME)
 
 re: fclean all
+
+compare: all
+	@./get_next_line Makefile > t1
+	@cat -e Makefile | sed 's/^\(.*\)\$$/[\1]/' > t2
+	@diff t1 t2
+
+
