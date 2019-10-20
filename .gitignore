@@ -9,5 +9,6 @@ testnl
 test
 test2
 test3
+large_file.txt
 *.dSYM
 

@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/10 09:27:41 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/20 07:13:16 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/20 08:30:07 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 int	main(int argc, char **argv)
 {
+	int		i;
 	int		fd;
 	char	*line;
 	int		ret;
@@ -29,10 +30,12 @@ int	main(int argc, char **argv)
 	}
 	printf("BUFFER_SIZE = %d\n", BUFFER_SIZE);
 	fd = open(argv[1], O_RDONLY);
+	i = 1;
 	while ((ret = get_next_line(fd, &line)) == LINE_READ)
 	{
-		printf("[%s]\n", line);
+		printf("%3d [%s]\n", i, line);
 		free(line);
+		i++;
 	}
 	if (ret == -1)
 		printf("error\n");

@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 09:08:36 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/20 07:39:13 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/20 08:29:44 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ int		get_next_line(int fd, char **line)
 
 	if (fd < 0 || line == NULL)
 		return (ERROR);
-	had_rest = put_rest(line, rest);
+	if ((had_rest = put_rest(line, rest)) == -1)
+		return (LINE_READ);
 	while (rest[0] == '\0' && (ret = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
 		buf[ret] = '\0';
@@ -74,6 +75,8 @@ int		put_rest(char **line, char *rest)
 		rest[0] = '\0';
 		return (had_rest);
 	}
+	if (split_at + 1 == ft_strlen(rest))
+		had_rest = -1;
 	*line = malloc(sizeof(char) * (split_at + 1));
 	ft_strncpy(*line, rest, split_at);
 	(*line)[split_at] = '\0';
