@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/10 09:27:41 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/20 08:30:07 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/20 09:03:18 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <limits.h>
 #include "get_next_line.h"
 
 int	main(int argc, char **argv)
@@ -23,6 +24,7 @@ int	main(int argc, char **argv)
 	char	*line;
 	int		ret;
 
+	/* printf("limit fdmax %d\n", OPEN_MAX); */
 	if (argc != 2)
 	{
 		printf("You forgot the filename");

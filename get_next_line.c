@@ -6,12 +6,13 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 09:08:36 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/20 08:29:44 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/20 09:04:18 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
+#include <limits.h>
 #include "get_next_line.h"
 
 /*
@@ -38,18 +39,18 @@ int		get_next_line(int fd, char **line)
 	int			ret;
 	int			split_at;
 	char		buf[BUFFER_SIZE + 1];
-	static char	rest[BUFFER_SIZE + 1] = {0};
+	static char	rest[OPEN_MAX][BUFFER_SIZE + 1] = {{0}};
 
-	if (fd < 0 || line == NULL)
+	if (fd < 0 || fd > OPEN_MAX || line == NULL)
 		return (ERROR);
-	if ((had_rest = put_rest(line, rest)) == -1)
+	if ((had_rest = put_rest(line, rest[fd])) == -1)
 		return (LINE_READ);
-	while (rest[0] == '\0' && (ret = read(fd, buf, BUFFER_SIZE)) > 0)
+	while (rest[fd][0] == '\0' && (ret = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
 		buf[ret] = '\0';
 		if ((split_at = find_newline(buf)) != -1)
 		{
-			ft_strncpy(rest, buf + split_at + 1, BUFFER_SIZE);
+			ft_strncpy(rest[fd], buf + split_at + 1, BUFFER_SIZE);
 			buf[split_at] = '\0';
 			*line = ft_strappend(*line, buf);
 			return (*line == NULL ? ERROR : LINE_READ);
