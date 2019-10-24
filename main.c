@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/10 09:27:41 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/20 09:03:18 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/24 10:56:42 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	main(int argc, char **argv)
 	char	*line;
 	int		ret;
 
-	/* printf("limit fdmax %d\n", OPEN_MAX); */
+	printf("limit fdmax %d\n", OPEN_MAX);
 	if (argc != 2)
 	{
 		printf("You forgot the filename");
@@ -32,12 +32,11 @@ int	main(int argc, char **argv)
 	}
 	printf("BUFFER_SIZE = %d\n", BUFFER_SIZE);
 	fd = open(argv[1], O_RDONLY);
-	i = 1;
+	i = 0;
 	while ((ret = get_next_line(fd, &line)) == LINE_READ)
 	{
-		printf("%3d [%s]\n", i, line);
+		printf("%3d [%s]\n", ++i, line);
 		free(line);
-		i++;
 	}
 	if (ret == -1)
 		printf("error\n");
