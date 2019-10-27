@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 09:08:36 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/24 10:55:30 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/27 19:06:04 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,13 @@
 ** return END_OF_FILE
 */
 
-int		real_get_next_line(int fd, char **line, int ret, int split_at)
+int		real_get_next_line(int fd, char **line, int ret)
 {
+	int			split_at;
 	t_bool		had_rest;
 	char		buf[BUFFER_SIZE + 1];
 	static char	rest[OPEN_MAX][BUFFER_SIZE + 1] = {{0}};
 
-	if (fd < 0 || fd > OPEN_MAX || line == NULL || BUFFER_SIZE < 0)
-		return (ERROR);
 	if ((had_rest = put_rest(line, rest[fd])) == -1)
 		return (LINE_READ);
 	while (rest[fd][0] == '\0' && (ret = read(fd, buf, BUFFER_SIZE)) > 0)
@@ -58,17 +57,24 @@ int		real_get_next_line(int fd, char **line, int ret, int split_at)
 	}
 	if (had_rest)
 		return (LINE_READ);
+	free(*line);
+	*line = NULL;
 	return (ret == -1 ? ERROR : END_OF_FILE);
 }
 
 int		get_next_line(int fd, char **line)
 {
-	int	ret;
-	int	split_at;
+	int		ret;
 
-	split_at = -1;
 	ret = 0;
-	return (real_get_next_line(fd, line, ret, split_at));
+	if (fd < 0 || fd > OPEN_MAX || line == NULL || BUFFER_SIZE < 0)
+		return (ERROR);
+	if (BUFFER_SIZE == 0)
+	{
+		*line = NULL;
+		return (LINE_READ);
+	}
+	return (real_get_next_line(fd, line, ret));
 }
 
 int		put_rest(char **line, char *rest)

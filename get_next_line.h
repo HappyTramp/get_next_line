@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 13:52:59 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/24 10:56:13 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/27 19:10:23 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <limits.h>
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1
+#  define BUFFER_SIZE 32
 # endif
 
 # define LINE_READ 1
@@ -32,7 +32,7 @@ typedef int	t_bool;
 ** get_next_line.c
 */
 
-int		real_get_next_line(int fd, char **line, int ret, int split_at);
+int		real_get_next_line(int fd, char **line, int ret);
 int		get_next_line(int fd, char **line);
 int		put_rest(char **line, char *rest);
 int		find_newline(char *str);
