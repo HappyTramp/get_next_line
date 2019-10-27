@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 09:08:36 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/27 21:50:24 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/27 23:22:33 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ int		real_get_next_line(int fd, char **line, int ret, int counter)
 	char		buf[BUFFER_SIZE + 1];
 	static char	rest[OPEN_MAX][BUFFER_SIZE + 1] = {{0}};
 
-	if ((had_rest = put_rest(line, rest[fd])) == -1)
-		return (LINE_READ);
+	if ((had_rest = put_rest(line, rest[fd])) == -1 || had_rest == -2)
+		return (had_rest == -1 ? LINE_READ : ERROR);
 	while (rest[fd][0] == '\0' && (ret = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
 		counter++;
@@ -86,14 +86,16 @@ int		put_rest(char **line, char *rest)
 	had_rest = rest[0] != '\0';
 	if ((split_at = find_newline(rest)) == -1)
 	{
-		*line = malloc(sizeof(char) * (ft_strlen(rest) + 1));
+		if ((*line = malloc(sizeof(char) * (ft_strlen(rest) + 1))) == NULL)
+			return (-2);
 		ft_strcpy(*line, rest);
 		rest[0] = '\0';
 		return (had_rest);
 	}
 	if (split_at + 1 == ft_strlen(rest))
 		had_rest = -1;
-	*line = malloc(sizeof(char) * (split_at + 1));
+	if ((*line = malloc(sizeof(char) * (split_at + 1))) == NULL)
+		return (-2);
 	ft_strncpy(*line, rest, split_at);
 	(*line)[split_at] = '\0';
 	ft_strncpy(rest, rest + split_at + 1, BUFFER_SIZE);
