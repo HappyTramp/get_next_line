@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 09:08:36 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/27 19:06:04 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/10/27 21:50:24 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@
 **         return LINE_READ
 **     push buf in line
 **
-** return END_OF_FILE
+** return GNL_EOF
 */
 
-int		real_get_next_line(int fd, char **line, int ret)
+int		real_get_next_line(int fd, char **line, int ret, int counter)
 {
 	int			split_at;
 	t_bool		had_rest;
@@ -44,6 +44,7 @@ int		real_get_next_line(int fd, char **line, int ret)
 		return (LINE_READ);
 	while (rest[fd][0] == '\0' && (ret = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
+		counter++;
 		buf[ret] = '\0';
 		if ((split_at = find_newline(buf)) != -1)
 		{
@@ -55,18 +56,18 @@ int		real_get_next_line(int fd, char **line, int ret)
 		if ((*line = ft_strappend(*line, buf)) == NULL)
 			return (ERROR);
 	}
-	if (had_rest)
-		return (LINE_READ);
-	free(*line);
-	*line = NULL;
-	return (ret == -1 ? ERROR : END_OF_FILE);
+	if (ret == -1)
+		return (clean_line(line, ERROR));
+	return (had_rest || counter != 0 ? LINE_READ : clean_line(line, GNL_EOF));
 }
 
 int		get_next_line(int fd, char **line)
 {
 	int		ret;
+	int		counter;
 
 	ret = 0;
+	counter = 0;
 	if (fd < 0 || fd > OPEN_MAX || line == NULL || BUFFER_SIZE < 0)
 		return (ERROR);
 	if (BUFFER_SIZE == 0)
@@ -74,7 +75,7 @@ int		get_next_line(int fd, char **line)
 		*line = NULL;
 		return (LINE_READ);
 	}
-	return (real_get_next_line(fd, line, ret));
+	return (real_get_next_line(fd, line, ret, counter));
 }
 
 int		put_rest(char **line, char *rest)
@@ -108,4 +109,11 @@ int		find_newline(char *str)
 		if (str[i] == '\n')
 			return (i);
 	return (-1);
+}
+
+int		clean_line(char **line, int ret)
+{
+	free(*line);
+	*line = NULL;
+	return (ret);
 }
