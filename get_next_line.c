@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 09:08:36 by cacharle          #+#    #+#             */
-/*   Updated: 2019/11/03 00:18:57 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/11/03 00:33:16 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,7 @@ int		get_next_line(int fd, char **line)
 
 	if (fd < 0 || fd > OPEN_MAX || line == NULL || BUFFER_SIZE <= 0)
 		return (STATUS_ERROR);
-	*line = malloc(1);
-	(*line)[0] = 0;
+	*line = NULL;
 	if (rest[fd] == NULL || rest[fd][0] == 0)
 		return (read_line(fd, line, &rest[fd]));
 	if (HAS_NEWLINE(rest[fd], split_at))
@@ -81,13 +80,13 @@ int		read_line(int fd, char **line, char **rest)
 			*rest = ft_strdup(buf + split_at + 1);
 			buf[split_at] = '\0';
 			if ((*line = ft_strappend(*line, buf)) == NULL)
-				return (free_return(&buf, STATUS_ERROR));
-			return (free_return(&buf, STATUS_LINE));
+				return (free_return(&buf, rest, STATUS_ERROR));
+			return (free_return(&buf, NULL, STATUS_LINE));
 		}
 		if ((*line = ft_strappend(*line, buf)) == NULL)
-			return (free_return(&buf, STATUS_ERROR));
+			return (free_return(&buf, rest, STATUS_ERROR));
 	}
-	return (free_return(&buf, ret));
+	return (free_return(&buf, rest, ret));
 }
 
 int		find_newline(char *str)
@@ -101,11 +100,17 @@ int		find_newline(char *str)
 	return (-1);
 }
 
-int		free_return(char **ptr, int ret)
+int		free_return(char **ptr, char **ptr2, int ret)
 {
-	if (ptr == NULL)
-		return (ret);
-	free(*ptr);
-	*ptr = NULL;
+	if (ptr != NULL)
+	{
+		free(*ptr);
+		*ptr = NULL;
+	}
+	if (ptr2 != NULL)
+	{
+		free(*ptr2);
+		*ptr2 = NULL;
+	}
 	return (ret);
 }
