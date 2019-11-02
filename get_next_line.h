@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 13:52:59 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/27 21:50:05 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/11/03 00:10:24 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,14 @@
 #  define BUFFER_SIZE 32
 # endif
 
-# define LINE_READ 1
-# define GNL_EOF 0
-# define ERROR -1
+# define STATUS_LINE 1
+# define STATUS_EOF 0
+# define STATUS_ERROR -1
 
 # define TRUE 1
 # define FALSE 0
+
+# define FT_STRNCPY_BUF(dest, src) (ft_strncpy(dest, src, BUFFER_SIZE + 1))
 
 typedef int	t_bool;
 
@@ -32,20 +34,19 @@ typedef int	t_bool;
 ** get_next_line.c
 */
 
-int		real_get_next_line(int fd, char **line, int ret, int counter);
 int		get_next_line(int fd, char **line);
-int		put_rest(char **line, char *rest);
+int		read_line(int fd, char **line, char **rest);
 int		find_newline(char *str);
-int		clean_line(char **line, int ret);
+int		free_return(char **ptr, int ret);
 
 /*
 ** get_next_line_utils.c - helper functions
 */
 
+char	*ft_strappend(char *dest, char *src);
 char	*ft_strncpy(char *dest, const char *src, int n);
 int		ft_strlen(char *str);
-char	*ft_strcat(char *dest, const char *src);
 char	*ft_strcpy(char *dest, const char *src);
-char	*ft_strappend(char *dest, char *src);
+char	*ft_strdup(const char *s);
 
 #endif

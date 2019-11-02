@@ -6,12 +6,31 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/08 08:52:59 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/27 19:02:57 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/11/02 23:01:40 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "get_next_line.h"
+
+char	*ft_strappend(char *dest, char *src)
+{
+	void	*copy;
+	int		dest_len;
+
+	dest_len = ft_strlen(dest);
+	if ((copy = (char*)malloc(sizeof(char) * (dest_len + 1))) == NULL)
+		return (NULL);
+	ft_strcpy(copy, dest);
+	free(dest);
+	dest = (char*)malloc(sizeof(char) * (dest_len + ft_strlen(src) + 1));
+	if (dest == NULL)
+		return (NULL);
+	ft_strcpy(dest, copy);
+	free(copy);
+	ft_strcpy(dest + dest_len, src);
+	return (dest);
+}
 
 char	*ft_strncpy(char *dest, const char *src, int n)
 {
@@ -38,23 +57,6 @@ int		ft_strlen(char *str)
 	return (counter);
 }
 
-char	*ft_strappend(char *dest, char *src)
-{
-	void	*copy;
-
-	if ((copy = (char*)malloc(sizeof(char) * (ft_strlen(dest) + 1))) == NULL)
-		return (NULL);
-	ft_strcpy(copy, dest);
-	free(dest);
-	dest = (char*)malloc(sizeof(char) * (ft_strlen(copy) + ft_strlen(src) + 1));
-	if (dest == NULL)
-		return (NULL);
-	ft_strcpy(dest, copy);
-	free(copy);
-	ft_strcat(dest, src);
-	return (dest);
-}
-
 char	*ft_strcpy(char *dest, const char *src)
 {
 	int i;
@@ -69,20 +71,21 @@ char	*ft_strcpy(char *dest, const char *src)
 	return (dest);
 }
 
-char	*ft_strcat(char *dest, const char *src)
+char	*ft_strdup(const char *s)
 {
-	int i;
-	int j;
+	char	*clone;
+	size_t	i;
+	size_t	len;
 
+	len = ft_strlen((char*)s);
+	if ((clone = (char*)malloc(sizeof(char) * (len + 1))) == NULL)
+		return (NULL);
 	i = 0;
-	while (dest[i])
-		i++;
-	j = 0;
-	while (src[j])
+	while (i < len)
 	{
-		dest[i + j] = src[j];
-		j++;
+		clone[i] = s[i];
+		i++;
 	}
-	dest[i + j] = '\0';
-	return (dest);
+	clone[i] = '\0';
+	return (clone);
 }

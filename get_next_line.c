@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 09:08:36 by cacharle          #+#    #+#             */
-/*   Updated: 2019/10/27 23:22:33 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/11/03 00:18:57 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,73 +33,61 @@
 ** return GNL_EOF
 */
 
-int		real_get_next_line(int fd, char **line, int ret, int counter)
-{
-	int			split_at;
-	t_bool		had_rest;
-	char		buf[BUFFER_SIZE + 1];
-	static char	rest[OPEN_MAX][BUFFER_SIZE + 1] = {{0}};
-
-	if ((had_rest = put_rest(line, rest[fd])) == -1 || had_rest == -2)
-		return (had_rest == -1 ? LINE_READ : ERROR);
-	while (rest[fd][0] == '\0' && (ret = read(fd, buf, BUFFER_SIZE)) > 0)
-	{
-		counter++;
-		buf[ret] = '\0';
-		if ((split_at = find_newline(buf)) != -1)
-		{
-			ft_strncpy(rest[fd], buf + split_at + 1, BUFFER_SIZE);
-			buf[split_at] = '\0';
-			*line = ft_strappend(*line, buf);
-			return (*line == NULL ? ERROR : LINE_READ);
-		}
-		if ((*line = ft_strappend(*line, buf)) == NULL)
-			return (ERROR);
-	}
-	if (ret == -1)
-		return (clean_line(line, ERROR));
-	return (had_rest || counter != 0 ? LINE_READ : clean_line(line, GNL_EOF));
-}
+#define HAS_NEWLINE(str, split_at)    ((split_at = find_newline(str)) != -1)
+#define HAS_NO_NEWLINE(str, split_at) ((split_at = find_newline(str)) == -1)
 
 int		get_next_line(int fd, char **line)
 {
-	int		ret;
-	int		counter;
+	int			split_at;
+	static char	*rest[OPEN_MAX] = {NULL};
 
-	ret = 0;
-	counter = 0;
-	if (fd < 0 || fd > OPEN_MAX || line == NULL || BUFFER_SIZE < 0)
-		return (ERROR);
-	if (BUFFER_SIZE == 0)
+	if (fd < 0 || fd > OPEN_MAX || line == NULL || BUFFER_SIZE <= 0)
+		return (STATUS_ERROR);
+	*line = malloc(1);
+	(*line)[0] = 0;
+	if (rest[fd] == NULL || rest[fd][0] == 0)
+		return (read_line(fd, line, &rest[fd]));
+	if (HAS_NEWLINE(rest[fd], split_at))
 	{
-		*line = NULL;
-		return (LINE_READ);
+		if ((*line = (char*)malloc(sizeof(char) * (split_at + 1))) == NULL)
+			return (STATUS_ERROR);
+		ft_strncpy(*line, rest[fd], split_at);
+		(*line)[split_at] = '\0';
+		ft_strcpy(rest[fd], rest[fd] + split_at + 1);
+		return (STATUS_LINE);
 	}
-	return (real_get_next_line(fd, line, ret, counter));
+	if (!(*line = (char*)malloc(sizeof(char) * (ft_strlen(rest[fd]) + 1))))
+		return (STATUS_ERROR);
+	ft_strcpy(*line, rest[fd]);
+	free(rest[fd]);
+	rest[fd] = NULL;
+	return (read_line(fd, line, &rest[fd]));
 }
 
-int		put_rest(char **line, char *rest)
+int		read_line(int fd, char **line, char **rest)
 {
+	int		ret;
 	int		split_at;
-	t_bool	had_rest;
+	char	*buf;
 
-	had_rest = rest[0] != '\0';
-	if ((split_at = find_newline(rest)) == -1)
+	if ((buf = malloc(sizeof(char) * (BUFFER_SIZE + 1))) == NULL)
+		return (STATUS_ERROR);
+	while ((ret = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
-		if ((*line = malloc(sizeof(char) * (ft_strlen(rest) + 1))) == NULL)
-			return (-2);
-		ft_strcpy(*line, rest);
-		rest[0] = '\0';
-		return (had_rest);
+		buf[ret] = '\0';
+		if (HAS_NEWLINE(buf, split_at))
+		{
+			free(*rest);
+			*rest = ft_strdup(buf + split_at + 1);
+			buf[split_at] = '\0';
+			if ((*line = ft_strappend(*line, buf)) == NULL)
+				return (free_return(&buf, STATUS_ERROR));
+			return (free_return(&buf, STATUS_LINE));
+		}
+		if ((*line = ft_strappend(*line, buf)) == NULL)
+			return (free_return(&buf, STATUS_ERROR));
 	}
-	if (split_at + 1 == ft_strlen(rest))
-		had_rest = -1;
-	if ((*line = malloc(sizeof(char) * (split_at + 1))) == NULL)
-		return (-2);
-	ft_strncpy(*line, rest, split_at);
-	(*line)[split_at] = '\0';
-	ft_strncpy(rest, rest + split_at + 1, BUFFER_SIZE);
-	return (had_rest);
+	return (free_return(&buf, ret));
 }
 
 int		find_newline(char *str)
@@ -113,9 +101,11 @@ int		find_newline(char *str)
 	return (-1);
 }
 
-int		clean_line(char **line, int ret)
+int		free_return(char **ptr, int ret)
 {
-	free(*line);
-	*line = NULL;
+	if (ptr == NULL)
+		return (ret);
+	free(*ptr);
+	*ptr = NULL;
 	return (ret);
 }
