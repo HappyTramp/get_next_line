@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 13:52:59 by cacharle          #+#    #+#             */
-/*   Updated: 2019/11/03 00:29:53 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/11/03 22:43:18 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ typedef int	t_bool;
 */
 
 int		get_next_line(int fd, char **line);
-int		read_line(int fd, char **line, char **rest);
+int		read_line(int fd, char **line, char *rest);
 int		find_newline(char *str);
 int		free_return(char **ptr, char **rest, int ret);
 

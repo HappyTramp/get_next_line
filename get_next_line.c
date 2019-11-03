@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 09:08:36 by cacharle          #+#    #+#             */
-/*   Updated: 2019/11/03 00:33:16 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/11/04 00:00:16 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,15 +39,17 @@
 int		get_next_line(int fd, char **line)
 {
 	int			split_at;
-	static char	*rest[OPEN_MAX] = {NULL};
+	static char	rest[OPEN_MAX][BUFFER_SIZE + 1] = {{0}};
 
 	if (fd < 0 || fd > OPEN_MAX || line == NULL || BUFFER_SIZE <= 0)
 		return (STATUS_ERROR);
-	*line = NULL;
-	if (rest[fd] == NULL || rest[fd][0] == 0)
-		return (read_line(fd, line, &rest[fd]));
+	if ((*line = ft_strdup("")) == NULL)
+		return (STATUS_ERROR);
+	if (rest[fd][0] == '\0')
+		return (read_line(fd, line, rest[fd]));
 	if (HAS_NEWLINE(rest[fd], split_at))
 	{
+		free(*line);
 		if ((*line = (char*)malloc(sizeof(char) * (split_at + 1))) == NULL)
 			return (STATUS_ERROR);
 		ft_strncpy(*line, rest[fd], split_at);
@@ -55,38 +57,39 @@ int		get_next_line(int fd, char **line)
 		ft_strcpy(rest[fd], rest[fd] + split_at + 1);
 		return (STATUS_LINE);
 	}
+	free(*line);
 	if (!(*line = (char*)malloc(sizeof(char) * (ft_strlen(rest[fd]) + 1))))
 		return (STATUS_ERROR);
 	ft_strcpy(*line, rest[fd]);
-	free(rest[fd]);
-	rest[fd] = NULL;
-	return (read_line(fd, line, &rest[fd]));
+	rest[fd][0] = '\0';
+	return (read_line(fd, line, rest[fd]));
 }
 
-int		read_line(int fd, char **line, char **rest)
+int		read_line(int fd, char **line, char *rest)
 {
 	int		ret;
 	int		split_at;
 	char	*buf;
 
 	if ((buf = malloc(sizeof(char) * (BUFFER_SIZE + 1))) == NULL)
-		return (STATUS_ERROR);
+		return (free_return(line, NULL, STATUS_ERROR));
 	while ((ret = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
 		buf[ret] = '\0';
 		if (HAS_NEWLINE(buf, split_at))
 		{
-			free(*rest);
-			*rest = ft_strdup(buf + split_at + 1);
+			ft_strcpy(rest, buf + split_at + 1);
 			buf[split_at] = '\0';
 			if ((*line = ft_strappend(*line, buf)) == NULL)
-				return (free_return(&buf, rest, STATUS_ERROR));
+				return (free_return(&buf, NULL, STATUS_ERROR));
 			return (free_return(&buf, NULL, STATUS_LINE));
 		}
 		if ((*line = ft_strappend(*line, buf)) == NULL)
-			return (free_return(&buf, rest, STATUS_ERROR));
+			return (free_return(&buf, NULL, STATUS_ERROR));
 	}
-	return (free_return(&buf, rest, ret));
+	if (ret == -1)
+		return (free_return(&buf, line, STATUS_ERROR));
+	return (free_return(&buf, NULL, ret));
 }
 
 int		find_newline(char *str)

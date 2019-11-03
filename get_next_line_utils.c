@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/08 08:52:59 by cacharle          #+#    #+#             */
-/*   Updated: 2019/11/03 00:26:34 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/11/03 22:57:39 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@ char	*ft_strappend(char *dest, char *src)
 	void	*copy;
 	int		dest_len;
 
-	if (dest == NULL)
-		return (ft_strdup(src));
 	dest_len = ft_strlen(dest);
 	if ((copy = (char*)malloc(sizeof(char) * (dest_len + 1))) == NULL)
 		return (NULL);

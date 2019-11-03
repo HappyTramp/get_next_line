@@ -6,7 +6,7 @@
 /*   By: cacharle <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/10 09:27:41 by cacharle          #+#    #+#             */
-/*   Updated: 2019/11/02 22:42:58 by cacharle         ###   ########.fr       */
+/*   Updated: 2019/11/03 22:18:03 by cacharle         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,11 @@ int	main(int argc, char **argv)
 	if (ret == -1)
 		printf("error\n");
 	else if (ret == 0)
+	{
+		printf("at EOF: [%s]\n", line);
+		free(line);
 		printf("EOF\n");
+	}
 	close(fd);
 	return (0);
 }
